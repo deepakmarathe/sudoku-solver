@@ -75,7 +75,6 @@ public class SudokuSolverDriver {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        //create parser
         CommandLineParser parser = new DefaultParser();
         Options options = buildOptionParser(args);
         HelpFormatter formatter = new HelpFormatter();
@@ -94,13 +93,13 @@ public class SudokuSolverDriver {
                 grid = parseFile(new FileInputStream(new File(SudokuSolverDriver.class.getResource("/input.txt").getPath())),
                         delimiterString, dimentionString);
             } else if (commandLine.hasOption(helpCommandString)) {
-                formatter.printHelp(" java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
+                formatter.printHelp("java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
                 System.exit(0);
             } else {
                 if (commandLine.hasOption(inputFileCommandString)) {
                     inputFileString = commandLine.getOptionValue(inputFileCommandString);
                 } else {
-                    formatter.printHelp("solver", options);
+                    formatter.printHelp("java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
                 }
                 if (commandLine.hasOption(outputFileCommandString)) {
                     outputFileString = commandLine.getOptionValue(outputFileCommandString);
@@ -109,7 +108,7 @@ public class SudokuSolverDriver {
                     delimiterString = commandLine.getOptionValue(delimiterCommandString);
                 }
                 if (!commandLine.hasOption(dimentionCommandString)) {
-                    formatter.printHelp("solver", options);
+                    formatter.printHelp("java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
                 } else {
                     dimentionString = commandLine.getOptionValue(dimentionCommandString);
                 }
@@ -117,7 +116,7 @@ public class SudokuSolverDriver {
                 grid = parseFile(new FileInputStream(new File(inputFileString)), delimiterString, dimentionString);
             }
         } catch (ParseException e) {
-            formatter.printHelp("solver", options);
+            formatter.printHelp("java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
