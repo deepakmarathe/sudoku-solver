@@ -18,13 +18,16 @@ public class SudokuSolverDriver {
     private static String outputFileCommandString = "outputFile";
     private static String delimiterCommandString = "delimiter";
     private static String dimentionCommandString = "dimention";
-    private static String testCommandString = "test";
+    private static String printInputCommandString = "printInput";
+    private static String printOutputCommandString = "printOutput";
     private static String helpCommandString = "help";
 
 
     public static Options buildOptionParser(String[] args) {
         Option help = new Option(helpCommandString, "print help message");
-        Option test = new Option(testCommandString, "test program");
+        Option printInput = new Option(printInputCommandString, "display the input sudoku.");
+        Option printOutput = new Option(printOutputCommandString, "display the solved sudoku puzzle.");
+
         Option inputFile = OptionBuilder.withArgName("file")
                 .hasArg()
                 .withDescription("use given file for sudoku puzzle")
@@ -47,7 +50,8 @@ public class SudokuSolverDriver {
         options.addOption(outputFile);
         options.addOption(dimention);
         options.addOption(delimiter);
-        options.addOption(test);
+        options.addOption(printInput);
+        options.addOption(printOutput);
         return options;
     }
 
@@ -79,20 +83,18 @@ public class SudokuSolverDriver {
         Options options = buildOptionParser(args);
         HelpFormatter formatter = new HelpFormatter();
 
+        PrintStream out = System.out;
         String inputFileString = null;
         String delimiterString = null;
         String dimentionString = null;
         String outputFileString = null;
+        boolean displayInput = false;
+        boolean displaySolution = false;
         int grid[][] = null;
 
         try {
             CommandLine commandLine = parser.parse(options, args);
-            if (commandLine.hasOption(testCommandString)) {
-                delimiterString = ",";
-                dimentionString = "9";
-                grid = parseFile(new FileInputStream(new File(SudokuSolverDriver.class.getResource("/input.txt").getPath())),
-                        delimiterString, dimentionString);
-            } else if (commandLine.hasOption(helpCommandString)) {
+            if (commandLine.hasOption(helpCommandString)) {
                 formatter.printHelp("java -cp <sudoku-solver-${version}-jar-with-dependencies.jar>  com.deepakm.puzzles.sudoku.SudokuSolverDriver", options);
                 System.exit(0);
             } else {
@@ -103,6 +105,9 @@ public class SudokuSolverDriver {
                 }
                 if (commandLine.hasOption(outputFileCommandString)) {
                     outputFileString = commandLine.getOptionValue(outputFileCommandString);
+                    if (outputFileString != null) {
+                        out = new PrintStream(new File(outputFileString));
+                    }
                 }
                 if (commandLine.hasOption(delimiterCommandString)) {
                     delimiterString = commandLine.getOptionValue(delimiterCommandString);
@@ -112,7 +117,12 @@ public class SudokuSolverDriver {
                 } else {
                     dimentionString = commandLine.getOptionValue(dimentionCommandString);
                 }
-
+                if (commandLine.hasOption(printInputCommandString)) {
+                    displayInput = true;
+                }
+                if (commandLine.hasOption(printOutputCommandString)) {
+                    displaySolution = true;
+                }
                 grid = parseFile(new FileInputStream(new File(inputFileString)), delimiterString, dimentionString);
             }
         } catch (ParseException e) {
@@ -122,18 +132,18 @@ public class SudokuSolverDriver {
             e.printStackTrace();
         }
 
-        PrintStream out = System.out;
-        if (outputFileString != null) {
-            out = new PrintStream(new File(outputFileString));
-        }
-
         Board board = new ArrayBackedBoard(Integer.valueOf(dimentionString), Integer.valueOf(dimentionString), 0);
         board.initialise(grid);
-        board.printBoard(System.out);
+        if (displayInput) {
+            System.out.println("\nInput (Unsolved Sudoku) : ");
+            board.printBoard(System.out);
+        }
 
         SudokuSolver sudokuSolver = new BacktrackingSudokuSolver(board);
         sudokuSolver.solve();
-        System.out.println("Solved puzzle : ");
-        board.printBoard(out);
+        if (displaySolution) {
+            System.out.println("\nSolved sudoku : ");
+            board.printBoard(out);
+        }
     }
 }

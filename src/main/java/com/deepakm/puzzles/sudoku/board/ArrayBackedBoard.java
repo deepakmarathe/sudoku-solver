@@ -110,10 +110,10 @@ public class ArrayBackedBoard implements Board {
             }
             String line = buffer.toString();
 
-            if( i!= 0) {
-                out.println(line);
-
+            if (i != 0) {
+                out.print(line);
                 if ((i + 1) % 3 == 0) {
+                    out.println();
                     for (int k = 0; k < line.length() / 2; k++) {
                         out.print(horizontal + "" + space);
                     }
@@ -123,7 +123,7 @@ public class ArrayBackedBoard implements Board {
                     out.print(horizontal + "" + space);
                 }
                 out.println();
-                out.println(line);
+                out.print(line);
             }
             out.println();
         }
